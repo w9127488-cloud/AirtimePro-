@@ -1,1 +1,641 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AirtimePro - Sell Airtime for M-Pesa</title>
+    <style>
+        /* CSS Styling - Times New Roman as requested */
+        :root {
+            --primary-red: #E60000; /* Safaricom Red */
+            --dark-red: #8B0000;
+            --primary-green: #43B02A; /* M-Pesa Green */
+            --bg-color: #f4f6f9;
+            --text-dark: #222;
+            --text-light: #666;
+            --white: #ffffff;
+            --shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Times New Roman', Times, serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-dark);
+            padding-bottom: 80px;
+        }
+
+        /* Top Navigation */
+        .navbar {
+            background: var(--white);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-weight: bold;
+            font-size: 20px;
+            color: var(--dark-red);
+        }
+
+        .admin-contact {
+            font-size: 12px;
+            color: var(--text-light);
+            text-align: right;
+        }
+
+        /* Main Container */
+        .container {
+            padding: 15px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--white);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: var(--shadow);
+        }
+
+        .card-dark {
+            background: linear-gradient(135deg, #1a1a1a, #3a0000);
+            color: var(--white);
+            text-align: center;
+        }
+
+        .card-red {
+            background: var(--primary-red);
+            color: var(--white);
+        }
+
+        .card-red h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .card-red p {
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .btn-white {
+            background: var(--white);
+            color: var(--primary-red);
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            width: 100%;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-white:active { transform: scale(0.98); }
+
+        /* Networks */
+        .network-title {
+            font-weight: bold;
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+
+        .network-grid {
+            display: flex;
+            gap: 10px;
+            justify-content: space-between;
+        }
+
+        .network-btn {
+            flex: 1;
+            padding: 15px 10px;
+            border: 2px solid #eee;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+            background: var(--white);
+        }
+
+        .network-btn.active {
+            border-color: var(--primary-red);
+            box-shadow: 0 0 10px rgba(230,0,0,0.2);
+        }
+
+        .network-logo {
+            font-weight: bold;
+            font-size: 14px;
+            padding: 5px;
+            border-radius: 5px;
+            color: white;
+            display: inline-block;
+            margin-bottom: 5px;
+        }
+        .saf-logo { background: var(--primary-green); color: white; }
+        .airtel-logo { background: #FF0000; color: white; }
+        .telkom-logo { background: #0066CC; color: white; }
+
+        /* Simulation Area */
+        .simulation-box {
+            background: #333;
+            border-radius: 10px;
+            padding: 15px;
+            color: white;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .sim-step {
+            margin-bottom: 10px;
+            font-size: 14px;
+            opacity: 0.3;
+            transition: opacity 0.5s, transform 0.5s;
+            transform: translateX(-10px);
+        }
+        .sim-step.active {
+            opacity: 1;
+            transform: translateX(0);
+            font-weight: bold;
+            color: #4CAF50;
+        }
+
+        /* Calculator */
+        .input-group {
+            margin-bottom: 15px;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: inherit;
+        }
+        
+        .pills {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .pill {
+            background: #ffe6e6;
+            color: var(--primary-red);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .payout-box {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+        .payout-box h2 {
+            color: var(--primary-green);
+            font-size: 24px;
+        }
+
+        /* Form Area (Hidden by default) */
+        #sell-form {
+            display: none;
+        }
+        
+        .alert-box {
+            background: #fff3cd;
+            color: #856404;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 15px;
+            border: 1px solid #ffeeba;
+        }
+
+        .btn-submit {
+            background: var(--primary-red);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            width: 100%;
+            font-size: 18px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        /* AI Chat Bot */
+        .ai-bot-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--primary-green);
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 30px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            cursor: pointer;
+            z-index: 1000;
+        }
+
+        .chat-window {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            width: 320px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            z-index: 1000;
+        }
+
+        .chat-header {
+            background: var(--primary-green);
+            color: white;
+            padding: 15px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .chat-body {
+            height: 250px;
+            padding: 15px;
+            overflow-y: auto;
+            font-size: 14px;
+            background: #f9f9f9;
+        }
+
+        .msg { margin-bottom: 10px; padding: 8px 12px; border-radius: 10px; width: fit-content; max-width: 80%; }
+        .msg-bot { background: #e0e0e0; color: black; }
+        .msg-user { background: var(--primary-green); color: white; margin-left: auto; }
+        
+        .chat-input {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid #eee;
+        }
+        .chat-input input {
+            flex: 1;
+            border: none;
+            padding: 10px;
+            outline: none;
+            font-family: inherit;
+        }
+        .chat-input button {
+            background: var(--primary-green);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .success-tick {
+            display: none;
+            text-align: center;
+            color: var(--primary-green);
+            font-size: 40px;
+            margin: 10px 0;
+        }
+
+        /* Metrics Area (for admin view) */
+        .admin-metrics {
+            display: none;
+            background: #222;
+            color: #0f0;
+            padding: 15px;
+            font-family: monospace;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border: 2px solid #0f0;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Navbar -->
+    <div class="navbar">
+        <div class="logo">AirtimePro</div>
+        <div class="admin-contact">
+            Admin: 0768579396<br>
+            <small style="font-size:10px;">© 2026 Netflixx Nairobi</small>
+        </div>
+    </div>
+
+    <div class="container">
+        
+        <!-- Admin Live Notification Panel (Simulated) -->
+        <div id="adminPanel" class="admin-metrics">
+            [ADMIN NOTIFICATION SYSTEM]<br>
+            <span id="adminLog">Waiting for transactions...</span>
+        </div>
+
+        <!-- Dashboard Main Card -->
+        <div class="card card-dark">
+            <p style="color:#aaa; margin-bottom:5px;">Cash received</p>
+            <h1 style="font-size: 32px; margin-bottom: 15px;" id="cashReceived">KSh 0</h1>
+            <button class="btn-white" style="background: #333; color: white; border: 1px solid #555;" onclick="toggleForm()">Sell Airtime Now</button>
+        </div>
+
+        <!-- Promo Card -->
+        <div class="card card-red" id="promoCard">
+            <h1>AirtimePro</h1>
+            <p>Turn your airtime into M-Pesa cash instantly.</p>
+            <p style="font-weight:bold; font-size: 14px;">10% fee • Min KSh 500 • Safaricom, Airtel & Telkom</p>
+            <button class="btn-white" onclick="toggleForm()">Start Selling</button>
+        </div>
+
+        <!-- Selection & Sell Form Area -->
+        <div id="sell-form">
+            <div class="card">
+                <div class="network-title">Which airtime are you sending?</div>
+                <div class="network-grid">
+                    <div class="network-btn active" onclick="selectNetwork('Safaricom', this)">
+                        <span class="network-logo saf-logo">Safaricom</span><br>
+                        <small>Safaricom</small>
+                    </div>
+                    <div class="network-btn" onclick="selectNetwork('Airtel', this)">
+                        <span class="network-logo airtel-logo">airtel</span><br>
+                        <small>Airtel</small>
+                    </div>
+                    <div class="network-btn" onclick="selectNetwork('Telkom', this)">
+                        <span class="network-logo telkom-logo">telkom</span><br>
+                        <small>Telkom</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Simulation Side Screen -->
+            <div class="card" style="padding: 10px;">
+                <div class="simulation-box">
+                    <h4 style="color: var(--primary-red); margin-bottom: 10px;">How to Sambaza (Guide)</h4>
+                    <div class="sim-step active" id="step1">1. Dial *140*500*0768579396#</div>
+                    <div class="sim-step" id="step2">2. Confirm the amount on screen</div>
+                    <div class="sim-step" id="step3">3. Enter your M-Pesa PIN</div>
+                    <div class="sim-step" id="step4">4. Wait for confirmation SMS</div>
+                    <div class="sim-step" id="step5">5. Copy the SMS and paste it below</div>
+                </div>
+            </div>
+
+            <!-- Calculator Form -->
+            <div class="card">
+                <h3 style="margin-bottom: 15px;">Payout Calculator</h3>
+                <div class="input-group">
+                    <label>Airtime to send (KSh, minimum 500)</label>
+                    <input type="number" id="airtimeInput" value="500" min="500" oninput="calculatePayout()">
+                    <div class="pills">
+                        <div class="pill" onclick="setAmount(500)">500</div>
+                        <div class="pill" onclick="setAmount(1000)">1,000</div>
+                        <div class="pill" onclick="setAmount(2000)">2,000</div>
+                        <div class="pill" onclick="setAmount(5000)">5,000</div>
+                    </div>
+                </div>
+                <div class="payout-box">
+                    <p style="color: var(--text-light);">You receive on M-Pesa</p>
+                    <h2 id="payoutAmount">KSh 450</h2>
+                    <p style="font-size: 12px; color: #666;">Fee (10%): <span id="feeAmount">KSh 50</span></p>
+                </div>
+            </div>
+
+            <!-- Verification & Submission -->
+            <div class="card">
+                <h3 style="margin-bottom: 10px;">3. Proof of sending</h3>
+                <p style="font-size: 14px; margin-bottom: 10px; color: var(--text-light);">Paste the confirmation SMS you got after sending.</p>
+                
+                <div class="input-group">
+                    <label>M-Pesa number to receive cash</label>
+                    <input type="text" id="mpesaNumber" placeholder="e.g., 0712345678">
+                </div>
+
+                <div class="input-group">
+                    <textarea id="smsProof" rows="4" placeholder="Paste SMS here... (e.g., UA6FGG4HL1 Confirmed. Ksh500 sent to 0768579396...)" style="width:100%; padding:10px; border-radius:8px; border:1px solid #ccc; font-family: inherit;"></textarea>
+                </div>
+
+                <div class="alert-box" id="smsError" style="display:none;">
+                    Amount Ksh 500 not found. Number 0768579396 not found. Admin will check manually.
+                </div>
+
+                <label style="display:flex; align-items:center; gap:10px; margin-bottom:15px; font-weight:bold;">
+                    <input type="checkbox" id="confirmCheck"> I confirm I sent the airtime to 0768579396
+                </label>
+
+                <button class="btn-submit" onclick="submitTransaction()">Submit and get my receipt</button>
+                <div class="success-tick" id="successTick">✔ Transaction Submitted</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Chat Bot Widget -->
+    <div class="ai-bot-btn" onclick="toggleChat()">💬</div>
+    
+    <div class="chat-window" id="chatWindow">
+        <div class="chat-header">
+            <span>AirtimePro AI Assistant</span>
+            <span style="cursor:pointer;" onclick="toggleChat()">×</span>
+        </div>
+        <div class="chat-body" id="chatBody">
+            <div class="msg msg-bot">Hello! I am the AirtimePro AI. How can I help you today?</div>
+            <div class="msg msg-bot">You can ask me how to send airtime, or if you need to chat with a live agent, type 'Agent'.</div>
+        </div>
+        <div class="chat-input">
+            <input type="text" id="chatInput" placeholder="Type message..." onkeypress="handleChat(event)">
+            <button onclick="sendChat()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        // --- JavaScript Logic ---
+        
+        let currentNetwork = 'Safaricom';
+        let totalClientEarnings = 0;
+        let totalAirtimeReceived = 0;
+
+        // 1. Calculator Logic
+        function calculatePayout() {
+            let input = document.getElementById('airtimeInput').value;
+            let amount = parseFloat(input) || 0;
+            
+            if (amount >= 500) {
+                let fee = amount * 0.10;
+                let payout = amount - fee;
+                document.getElementById('payoutAmount').innerText = "KSh " + payout.toLocaleString();
+                document.getElementById('feeAmount').innerText = "KSh " + fee.toLocaleString();
+                document.getElementById('payoutAmount').style.color = "var(--primary-green)";
+            } else {
+                document.getElementById('payoutAmount').innerText = "KSh 0";
+                document.getElementById('feeAmount').innerText = "KSh 0";
+                document.getElementById('payoutAmount').style.color = "var(--primary-red)";
+            }
+        }
+
+        function setAmount(val) {
+            document.getElementById('airtimeInput').value = val;
+            calculatePayout();
+        }
+
+        // 2. UI Toggles
+        function toggleForm() {
+            let form = document.getElementById('sell-form');
+            let promo = document.getElementById('promoCard');
+            if (form.style.display === 'none' || form.style.display === '') {
+                form.style.display = 'block';
+                promo.style.display = 'none';
+                window.scrollTo(0, 0);
+                startSimulation();
+            } else {
+                form.style.display = 'none';
+                promo.style.display = 'block';
+            }
+        }
+
+        function selectNetwork(net, el) {
+            currentNetwork = net;
+            document.querySelectorAll('.network-btn').forEach(btn => btn.classList.remove('active'));
+            el.classList.add('active');
+        }
+
+        // 3. Simulation Animation
+        function startSimulation() {
+            let steps = ['step1', 'step2', 'step3', 'step4', 'step5'];
+            steps.forEach(id => document.getElementById(id).classList.remove('active'));
+            
+            let i = 0;
+            let interval = setInterval(() => {
+                if (i < steps.length) {
+                    document.getElementById(steps[i]).classList.add('active');
+                    i++;
+                } else {
+                    clearInterval(interval);
+                }
+            }, 1500); // 1.5 seconds per step
+        }
+
+        // 4. Submit & AI Bot Notification Logic
+        function submitTransaction() {
+            let amount = document.getElementById('airtimeInput').value;
+            let mpesa = document.getElementById('mpesaNumber').value;
+            let sms = document.getElementById('smsProof').value;
+            let isChecked = document.getElementById('confirmCheck').checked;
+
+            if (amount < 500) {
+                alert("Minimum transaction is KSh 500.");
+                return;
+            }
+            if (!mpesa || !sms || !isChecked) {
+                alert("Please fill in all fields and confirm the transaction.");
+                return;
+            }
+
+            // Simulate parsing SMS
+            let fee = amount * 0.10;
+            let payout = amount - fee;
+            
+            // Show tick
+            document.getElementById('successTick').style.display = 'block';
+            document.getElementById('smsError').style.display = 'block'; // Show the warning as seen in screenshot
+
+            // Update admin panel
+            let adminPanel = document.getElementById('adminPanel');
+            let adminLog = document.getElementById('adminLog');
+            
+            adminPanel.style.display = 'block';
+            adminLog.innerHTML = `
+                [NEW TXN DETECTED]<br>
+                Network: ${currentNetwork}<br>
+                Airtime Sent: KSh ${amount}<br>
+                Target: 0768579396<br>
+                Payout to: ${mpesa}<br>
+                AI Action: Prompting Admin to send KSh ${payout} via M-Pesa.<br>
+                Status: PENDING ADMIN APPROVAL.
+            `;
+
+            // Update Metrics
+            document.getElementById('cashReceived').innerText = "KSh " + payout;
+            
+            // Alert AI Bot
+            addBotMessage(`✅ AI Auto-Detected Transaction: User sent KSh ${amount} on ${currentNetwork}. Admin notified to send KSh ${payout} to ${mpesa}.`);
+            
+            // Simulate real-time admin approval after 5 seconds
+            setTimeout(() => {
+                adminLog.innerHTML += `<br><br><span style="color:yellow;">[ADMIN APPROVED]</span><br>Funds sent to ${mpesa}. Receipt generated.`;
+                addBotMessage(`🎉 Success! Your M-Pesa payment of KSh ${payout} has been sent to ${mpesa}. Thank you for using AirtimePro.`);
+            }, 5000);
+        }
+
+        // 5. AI Chat Logic
+        function toggleChat() {
+            let chat = document.getElementById('chatWindow');
+            chat.style.display = (chat.style.display === 'flex') ? 'none' : 'flex';
+        }
+
+        function handleChat(e) {
+            if (e.key === 'Enter') sendChat();
+        }
+
+        function sendChat() {
+            let input = document.getElementById('chatInput');
+            let text = input.value.trim();
+            if (!text) return;
+
+            addUserMessage(text);
+            input.value = '';
+
+            // Simple AI response logic
+            setTimeout(() => {
+                let lower = text.toLowerCase();
+                if (lower.includes('agent') || lower.includes('human') || lower.includes('help')) {
+                    addBotMessage("Connecting you to a live agent... Please wait. You can also email us at <b>airtimepro@info.com</b> or call Admin at <b>0768579396</b>.");
+                } else if (lower.includes('how') || lower.includes('send') || lower.includes('sambaza')) {
+                    addBotMessage("To sell airtime: 1. Dial *140*500*0768579396# 2. Enter PIN. 3. Paste the SMS into our app and enter your M-Pesa number.");
+                } else {
+                    addBotMessage("I am the AirtimePro AI. I can help you track payments or explain how to send airtime. Do you need a live agent?");
+                }
+            }, 1000);
+        }
+
+        function addUserMessage(text) {
+            let chatBody = document.getElementById('chatBody');
+            chatBody.innerHTML += `<div class="msg msg-user">${text}</div>`;
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }
+
+        function addBotMessage(text) {
+            let chatBody = document.getElementById('chatBody');
+            chatBody.innerHTML += `<div class="msg msg-bot">${text}</div>`;
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }
+    </script>
+</body>
+</html>
